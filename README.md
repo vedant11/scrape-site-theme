@@ -2,6 +2,8 @@
 
 extracts keywords and CSS for website theming
 
+credits: https://gist.github.com/zollinger/1722663, https://stackoverflow.com/users/221537/peter-hansen
+
 ## Usage
 
 `generate an HTML with color themes extracted from a URL`
