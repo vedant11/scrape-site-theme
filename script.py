@@ -14,6 +14,14 @@ from config import url2colors_headers
 
 
 def get_print_keywords(URL):
+    options = webdriver.ChromeOptions()
+    """
+    options.add_argument("--headless")
+    options.add_argument("start-maximized")
+    options.experimental_option("useAutomationExtension", False)
+    options.experimental_option("excludeSwitches", ["enable-automation"])
+    driver = webdriver.Chrome(options=options)
+    """
     driver = webdriver.Chrome()
     driver.get(URL)
     time.sleep(5)
@@ -42,6 +50,20 @@ def get_css_pallete(URL):
     pallete = response.json()
     print("pallete for URL", URL, pallete)
     print("dominant colors", cluster_colors(pallete))
+
+
+def get_webpage_ss(URL):
+    """
+    options = webdriver.ChromeOptions()
+    options.add_argument("--headless")
+    driver = webdriver.Chrome(options=options)
+    """
+    driver = webdriver.Chrome()
+    driver.get(URL)
+    time.sleep(5)
+    driver.save_screenshot("./experiments/screenshot.png")
+    driver.close()
+    return Image.open("./experiments/screenshot.png")
 
 
 def cluster_colors(pallete: list):

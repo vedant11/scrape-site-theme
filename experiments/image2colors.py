@@ -1,6 +1,7 @@
 from PIL import Image, ImageDraw
 import argparse
 import sys
+import os
 
 
 def get_colors(image_file, numcolors=10, resize=150):
@@ -35,6 +36,8 @@ def save_palette(colors, swatchsize=20, outfile="palette.png"):
         posx = posx + swatchsize
 
     del draw
+    if not os.path.exists(outfile):
+        os.makedirs(os.path.dirname(outfile), exist_ok=True)
     palette.save(outfile, "PNG")
 
 
@@ -42,4 +45,8 @@ if __name__ == "__main__":
     input_file = sys.argv[1]
     output_file = sys.argv[2]
     colors = get_colors(input_file)
+    with open("./experiments/colors.txt", "wt") as f:
+        for color in colors:
+            f.write(f"rgb{color}\n")
+        f.close()
     save_palette(colors, outfile=output_file)
