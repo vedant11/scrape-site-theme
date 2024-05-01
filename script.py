@@ -1,5 +1,7 @@
 # Importing necessary modules
 import json
+import os
+import re
 import time
 
 import en_core_web_sm
@@ -90,7 +92,7 @@ def cluster_colors(pallete: list):
     print(f"Most frequent color is {peak} ({color})")
 
 
-def generate_html_from_css_pallete(*colors):
+def generate_html_from_css_pallete(URL, *colors):
     """"""
     html = f"""
     <!DOCTYPE html>
@@ -117,5 +119,10 @@ def generate_html_from_css_pallete(*colors):
     </body>
     </html>
     """
-    with open("generated_index.html", "w") as f:
+    # regex to extract domain from URL
+    domain = re.search("https?://(.*)", URL).group(1)
+    dir = f"./htmls/{domain}"
+    if not os.path.exists(dir):
+        os.makedirs(dir)
+    with open(f"{dir}/generated_index.html", "w") as f:
         f.write(html)

@@ -1,29 +1,28 @@
+import argparse
+import subprocess
+
 from script import (
-    get_print_keywords,
-    get_css_pallete,
     generate_html_from_css_pallete,
     get_webpage_ss,
 )
 
-import subprocess
+parser = argparse.ArgumentParser(description="Process some URLs.")
+parser.add_argument(
+    "URLs", metavar="URL", type=str, nargs="+", help="an URL to process"
+)
+args = parser.parse_args()
 
-URLs = [
-    "https://calmclove.com/",
-]
-for URL in URLs:
-    get_print_keywords(URL)
-    get_css_pallete(URL)
-    generate_html_from_css_pallete("red", "green")
+for URL in args.URLs:
     get_webpage_ss(URL)
     subprocess.run(
         [
-            "python",
+            "python3",
             "experiments/image2colors.py",
             "experiments/screenshot.png",
             "experiments/palette.png",
         ]
     )
-    colors = ["#000000"]
+    colors = []
     with open("./experiments/colors.txt", "rt") as f:
         colors = f.readlines()
-    generate_html_from_css_pallete(*colors)
+    generate_html_from_css_pallete(URL, *colors)

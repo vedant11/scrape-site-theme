@@ -2,39 +2,41 @@
 
 extracts keywords and CSS for website theming
 
-## Usage
+## Installation
 
-`generate an HTML with color themes extracted from a URL`
-
-```py
-from script import (
-    generate_html_from_css_pallete,
-    get_webpage_ss,
-)
-
-import subprocess
-
-URLs = [
-    "https://calmclove.com/",
-]
-for URL in URLs:
-    get_webpage_ss(URL)
-    subprocess.run(
-        [
-            "python",
-            "experiments/image2colors.py",
-            "experiments/screenshot.png",
-            "experiments/palette.png",
-        ]
-    )
-    colors = ["#000000"]
-    with open("./experiments/colors.txt", "rt") as f:
-        colors = f.readlines()
-    generate_html_from_css_pallete(*colors)
-
+```sh
+make install
 ```
 
+## Usage
+
+generate an HTML with color themes extracted from a URL
+
+```sh
+python3 main.py https://example.org
+```
+
+or
+
+1. start a server to view to generate the HTML
+
+    ```sh
+    python3 serve.py
+    ```
+
+2. url in the address bar to generate
+
+    > http://localhost:8000/https://example.org
+
+3. load using
+    > http://localhost:8000/~load~example.org
+
 ## Tech
+
+### Todo
+
+-   Cluster similar colors
+-   Design a template that can include variety of colors from the palette
 
 ### Keywords
 
