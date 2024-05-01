@@ -1,4 +1,4 @@
-# scrapt-site-theme
+# scrape-site-theme
 
 extracts keywords and CSS for website theming
 
