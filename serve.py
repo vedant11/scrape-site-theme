@@ -1,3 +1,4 @@
+import time
 import re
 import os
 import subprocess
@@ -14,6 +15,8 @@ from script import (
 
 class Serv(BaseHTTPRequestHandler):
     def do_GET(self):
+        if self.path[1:] == "favicon.ico":
+            return
         if "~load~" in self.path:
             self.send_response(200)
             self.send_header("Content-type", "text/html")
@@ -33,8 +36,9 @@ class Serv(BaseHTTPRequestHandler):
             self.end_headers()
             # send makeshift json
             css = get_css_palette(url)
+            time.sleep(2)
             kw = get_keywords_bs(url)
-            self.wfile.write(json.dumps({"css": css, "kw": kw}))
+            self.wfile.write(json.dumps({"css": css, "kw": kw}).encode())
             return
             res = subprocess.run(["python3", "main.py", f"{url}"])
             if res.returncode != 0:

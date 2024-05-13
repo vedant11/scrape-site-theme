@@ -15,8 +15,6 @@ from selenium.webdriver.common.by import By
 
 from config import url2colors_headers
 
-soup = BeautifulSoup(html_doc, "html.parser")
-
 
 def get_print_keywords(URL):
     options = webdriver.ChromeOptions()
@@ -48,7 +46,12 @@ def get_keywords_bs(URL):
     doc = nlp(url_txt)
     print("url_txt", url_txt, "\n")
     print("doc.ents", doc.ents, "\n")
-    return doc.ents
+    # Convert doc.ents to a list of dictionaries
+    ents = [
+        {"text": ent.text, "label": ent.label_, "start": ent.start, "end": ent.end}
+        for ent in doc.ents
+    ]
+    return ents
 
 
 def get_css_palette(URL):
