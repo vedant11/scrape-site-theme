@@ -32,17 +32,21 @@ class Serv(BaseHTTPRequestHandler):
         else:
             try:
                 url = self.path[1:]
-                self.send_response(200)
-                self.send_header("Content-type", "application/json")
-                self.end_headers()
-                # send makeshift json
                 css = get_css_palette(url)
                 time.sleep(2)
                 kw = get_keywords_bs(url)
+                self.send_response(200)
+                self.send_header("Access-Control-Allow-Origin","*")
+                self.send_header("Access-Control-Allow-Methods","GET")
+                self.send_header("Access-Control-Allow-Header","Content-Type")
+                self.send_header("Content-type", "application/json")
+                self.end_headers()
                 self.wfile.write(json.dumps({"css": css, "kw": kw}).encode())
                 return
             except BrokenPipeError:
                 print("clietn disconnected")
+                self.send_response(500)
+                return
             res = subprocess.run(["python3", "main.py", f"{url}"])
             if res.returncode != 0:
                 self.send_response(400)
@@ -60,5 +64,5 @@ class Serv(BaseHTTPRequestHandler):
             )
 
 
-httpd = HTTPServer(("localhost", 8000), Serv)
+httpd = HTTPServer(("0.0.0.0", 8000), Serv)
 httpd.serve_forever()
