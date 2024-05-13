@@ -2,6 +2,14 @@ import re
 import os
 import subprocess
 from http.server import BaseHTTPRequestHandler, HTTPServer
+import json
+from script import (
+    generate_html_from_css_palette,
+    get_webpage_ss,
+    get_css_palette,
+    get_print_keywords,
+    get_keywords_bs,
+)
 
 
 class Serv(BaseHTTPRequestHandler):
@@ -20,6 +28,14 @@ class Serv(BaseHTTPRequestHandler):
                 self.wfile.write(f.read())
         else:
             url = self.path[1:]
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            self.end_headers()
+            # send makeshift json
+            css = get_css_palette(URL)
+            kw = get_keywords_bs(URL)
+            self.wfile.write(json.dumps("css":css, "kw":kw))
+            return
             res = subprocess.run(["python3", "main.py", f"{url}"])
             if res.returncode != 0:
                 self.send_response(400)
