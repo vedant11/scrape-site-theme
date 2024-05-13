@@ -32,9 +32,9 @@ class Serv(BaseHTTPRequestHandler):
             self.send_header("Content-type", "text/html")
             self.end_headers()
             # send makeshift json
-            css = get_css_palette(URL)
-            kw = get_keywords_bs(URL)
-            self.wfile.write(json.dumps("css":css, "kw":kw))
+            css = get_css_palette(url)
+            kw = get_keywords_bs(url)
+            self.wfile.write(json.dumps({"css": css, "kw": kw}))
             return
             res = subprocess.run(["python3", "main.py", f"{url}"])
             if res.returncode != 0:
