@@ -39,7 +39,10 @@ def get_print_keywords(URL):
 
 
 def get_keywords_bs(URL):
-    response = requests.get(URL)
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
+    }
+    response = requests.get(URL, headers=headers)
     soup = BeautifulSoup(response.content, "html.parser")
     url_txt = soup.get_text()
     nlp = en_core_web_sm.load()
