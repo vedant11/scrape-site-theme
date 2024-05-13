@@ -48,7 +48,12 @@ def get_keywords_bs(URL):
     print("doc.ents", doc.ents, "\n")
     # Convert doc.ents to a list of dictionaries
     ents = [
-        {"text": ent.text, "label": ent.label_, "start": ent.start, "end": ent.end}
+        {
+            "text": re.sub(r"\s+", " ", ent.text),
+            "label": ent.label_,
+            "start": ent.start,
+            "end": ent.end,
+        }
         for ent in doc.ents
     ]
     return ents
