@@ -11,7 +11,7 @@ from script import (
     get_print_keywords,
     get_keywords_bs,
 )
-
+import ssl
 
 class Serv(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -64,5 +64,10 @@ class Serv(BaseHTTPRequestHandler):
             )
 
 
+# Create an SSL context
+context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+context.load_cert_chain(certfile="cert.pem", keyfile="key.pem", password="pempass")
+
 httpd = HTTPServer(("0.0.0.0", 8000), Serv)
+httpd.socket = context.wrap_socket(httpd.socket, server_side=True)
 httpd.serve_forever()
