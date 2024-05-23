@@ -1,17 +1,25 @@
-import time
-import re
 import os
+import re
 import subprocess
-from flask import Flask, request, jsonify
-from script import get_css_palette, get_keywords_bs
 
+from flask import Flask, jsonify
+from flask_cors import CORS
+
+from src.interface import CSSKWInterface
 
 app = Flask(__name__)
+CORS(app)
 
 
 @app.route("/")
 def index():
     return "Hello, World!"
+
+
+@app.route("/favicon.ico")
+def random_ico():
+    data_url = "data:image/x-icon;base64,AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAEAAAAAAAAAAQAAAAAAEAAAAAAAB"
+    return data_url
 
 
 @app.route("/~load~<domain>")
@@ -25,12 +33,9 @@ def load(domain):
 
 @app.route("/<path:url>", methods=["GET"])
 def generate(url):
-    if not url:
-        return "error: missing url parameter", 400
-
-    css = get_css_palette(url)
-    time.sleep(2)
-    kw = get_keywords_bs(url)
+    if not url or not re.match(r"^https?://", url):
+        return "error: invalid url", 400
+    css, kw = CSSKWInterface.get_fastest_way_css_kw(url)
     return jsonify({"css": css, "kw": kw})
 
 

@@ -1,25 +1,10 @@
 # Importing necessary modules
-import argparse
-import json
-import os
-import re
-import sys
-import time
-from collections import OrderedDict, namedtuple
+from collections import namedtuple
 
-import en_core_web_sm
-import numpy as np
-import requests
-import scipy
 import spacy
-from _extractors import _CSSExtractors, _KWExtractors
-from _utils import _Utils
-from bs4 import BeautifulSoup
-from config import url2colors_headers
-from PIL import Image, ImageDraw
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from spacy.lang.en.stop_words import STOP_WORDS
+from src._utils import _Utils
+
+from src._extractors import _CSSExtractors, _KWExtractors
 
 nlp = spacy.load("en_core_web_sm")
 
@@ -27,6 +12,22 @@ CSSKW = namedtuple("CSSKW", ["css", "kw"])
 
 
 class CSSKWInterface:
+    @staticmethod
+    def get_fastest_way_css_kw(URL) -> CSSKW:
+        """
+        Dependencies:
+        url: bs
+        kw : spacy
+        css: url2colors API
+
+        Usage:
+        keywords:list = get_fastest_way_css_kw("https://www.google.com")
+        """
+        url_txt = _Utils.get_url_txt_bs(URL)
+        kw = _KWExtractors.get_keywords_spacy_en_core_web_sm(url_txt)
+        css = _CSSExtractors.get_css_palette_url2colors_api(URL)
+        return CSSKW(css, kw)
+
     @staticmethod
     def get_css_kw_spacy(URL) -> CSSKW:
         """

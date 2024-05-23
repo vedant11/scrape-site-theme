@@ -4,4 +4,4 @@ install:
 	pip3 install Pillow
 
 serve:
-	python3 -m flask --app flask_serve run
+	gunicorn -w 4 -b 0.0.0.0:8000 -k gevent flask_serve:app

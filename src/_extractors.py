@@ -1,24 +1,13 @@
 # Importing necessary modules
-import argparse
 import json
-import os
 import re
-import sys
-import time
-from collections import OrderedDict, namedtuple
 
 import en_core_web_sm
-import numpy as np
 import requests
-import scipy
 import spacy
-from _utils import _Utils
-from bs4 import BeautifulSoup
-from config import url2colors_headers
-from PIL import Image, ImageDraw
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from spacy.lang.en.stop_words import STOP_WORDS
+from src.config import url2colors_headers
+
+from src._utils import _Utils
 
 nlp = spacy.load("en_core_web_sm")
 
@@ -31,9 +20,7 @@ class _KWExtractors:
         """
         nlp = en_core_web_sm.load()
         doc = nlp(url_txt)
-        print("url_txt", url_txt, "\n")
-        print("doc.ents", doc.ents, "\n")
-        return [ent.text for ent in doc.ents]
+        return [re.sub(r"\s+", " ", ent.text) for ent in doc.ents]
 
 
 class _CSSExtractors:
@@ -50,7 +37,6 @@ class _CSSExtractors:
             headers=url2colors_headers,
         )
         palette = response.json()
-        print("palette for URL", URL, palette)
         return palette
 
     def get_css_palette_from_ss(URL) -> list:

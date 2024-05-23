@@ -1,26 +1,20 @@
 # Importing necessary modules
-import argparse
 import base64
 import io
-import json
 import os
 import re
-import sys
 import time
-from collections import OrderedDict, namedtuple
+from collections import OrderedDict
 
-import en_core_web_sm
 import numpy as np
 import requests
 import scipy
 import spacy
 from bs4 import BeautifulSoup
-from config import url2colors_headers
 from PIL import Image, ImageDraw
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from spacy.lang.en.stop_words import STOP_WORDS
-
 
 nlp = spacy.load("en_core_web_sm")
 
@@ -232,6 +226,7 @@ class _Utils:
         # Convert the dominant color to hexadecimal
         color = "#{:02x}{:02x}{:02x}".format(*map(int, peak))
         print(f"Most frequent color is {peak} ({color})")
+        return peak
 
     def get_page_source(URL):
         """Uses Selenium to get the page source
