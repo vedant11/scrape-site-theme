@@ -4,14 +4,9 @@ import os
 import subprocess
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
-from script import (
-    generate_html_from_css_palette,
-    get_webpage_ss,
-    get_css_palette,
-    get_print_keywords,
-    get_keywords_bs,
-)
+from src.interface import CSSKWInterface
 import ssl
+
 
 class Serv(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -32,13 +27,11 @@ class Serv(BaseHTTPRequestHandler):
         else:
             try:
                 url = self.path[1:]
-                css = get_css_palette(url)
-                time.sleep(2)
-                kw = get_keywords_bs(url)
+                css, kw = CSSKWInterface.get_fastest_way_css_kw(url)
                 self.send_response(200)
-                self.send_header("Access-Control-Allow-Origin","*")
-                self.send_header("Access-Control-Allow-Methods","GET")
-                self.send_header("Access-Control-Allow-Header","Content-Type")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.send_header("Access-Control-Allow-Methods", "GET")
+                self.send_header("Access-Control-Allow-Header", "Content-Type")
                 self.send_header("Content-type", "application/json")
                 self.end_headers()
                 self.wfile.write(json.dumps({"css": css, "kw": kw}).encode())
@@ -64,10 +57,5 @@ class Serv(BaseHTTPRequestHandler):
             )
 
 
-# Create an SSL context
-context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
-context.load_cert_chain(certfile="cert.pem", keyfile="key.pem", password="pempass")
-
 httpd = HTTPServer(("0.0.0.0", 8000), Serv)
-httpd.socket = context.wrap_socket(httpd.socket, server_side=True)
 httpd.serve_forever()

@@ -50,7 +50,3 @@ def generate_post(url):
 
     domain = re.search("https?://(.*)", url).group(1)
     return f"generated; go to /~load~{domain} to view the generated page"
-
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8000)
