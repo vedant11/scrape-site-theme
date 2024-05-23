@@ -2,14 +2,14 @@ import argparse
 import subprocess
 
 from script import (
-    generate_html_from_css_pallete,
+    generate_html_from_css_palette,
+    get_css_palette,
+    get_keywords_bs,
+    get_print_keywords,
     get_webpage_ss,
 )
 
-from keywords import (
-    scrape_website,
-    TextRank4Keyword
-)
+from keywords import scrape_website, TextRank4Keyword
 
 parser = argparse.ArgumentParser(description="Process some URLs.")
 parser.add_argument(
@@ -30,10 +30,12 @@ for URL in args.URLs:
     colors = []
     with open("./experiments/colors.txt", "rt") as f:
         colors = f.readlines()
-    generate_html_from_css_pallete(URL, *colors)
-    
+    generate_html_from_css_palette(URL, *colors)
+
     clean_text = scrape_website(URL)
     tr4w = TextRank4Keyword()
-    tr4w.analyze(clean_text, candidate_pos = ['NOUN', 'PROPN'], window_size=4, lower=False)
+    tr4w.analyze(
+        clean_text, candidate_pos=["NOUN", "PROPN"], window_size=4, lower=False
+    )
     keywords = tr4w.get_keywords(10)
     print(keywords)

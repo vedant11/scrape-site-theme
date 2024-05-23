@@ -8,6 +8,7 @@ import en_core_web_sm
 import numpy as np
 import requests
 import scipy.cluster
+from bs4 import BeautifulSoup
 from PIL import Image
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -37,10 +38,34 @@ def get_print_keywords(URL):
     print("doc.ents", doc.ents, "\n")
 
 
-def get_css_pallete(URL):
+def get_keywords_bs(URL):
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3"
+    }
+    response = requests.get(URL, headers=headers)
+    soup = BeautifulSoup(response.content, "html.parser")
+    url_txt = soup.get_text()
+    nlp = en_core_web_sm.load()
+    doc = nlp(url_txt)
+    print("url_txt", url_txt, "\n")
+    print("doc.ents", doc.ents, "\n")
+    # Convert doc.ents to a list of dictionaries
+    ents = [
+        {
+            "text": re.sub(r"\s+", " ", ent.text),
+            "label": ent.label_,
+            "start": ent.start,
+            "end": ent.end,
+        }
+        for ent in doc.ents
+    ]
+    return ents
+
+
+def get_css_palette(URL):
     """
     todo:
-    1. extract image palletes as well
+    1. extract image palettes as well
     """
     api_endpoint = "https://url2colors.com/api/colors"
     # post with the URL
@@ -49,9 +74,10 @@ def get_css_pallete(URL):
         data=json.dumps({"prevUrl": URL.split("https://")[1]}),
         headers=url2colors_headers,
     )
-    pallete = response.json()
-    print("pallete for URL", URL, pallete)
-    print("dominant colors", cluster_colors(pallete))
+    palette = response.json()
+    print("palette for URL", URL, palette)
+    return palette
+    # print("dominant colors", _cluster_colors(palette))
 
 
 def get_webpage_ss(URL):
@@ -68,9 +94,9 @@ def get_webpage_ss(URL):
     return Image.open("./experiments/screenshot.png")
 
 
-def cluster_colors(pallete: list):
+def _cluster_colors(palette: list):
     # Convert image to an array of RGB values
-    ar = np.asarray(pallete)
+    ar = np.asarray(palette)
     shape = ar.shape
     ar = ar.reshape(scipy.product(shape[:2]), shape[2]).astype(float)
 
@@ -92,7 +118,7 @@ def cluster_colors(pallete: list):
     print(f"Most frequent color is {peak} ({color})")
 
 
-def generate_html_from_css_pallete(URL, *colors):
+def generate_html_from_css_palette(URL, *colors):
     """"""
     html = f"""
     <!DOCTYPE html>
