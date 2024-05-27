@@ -33,8 +33,15 @@ def load(domain):
 
 @app.route("/<path:url>", methods=["GET"])
 def generate(url):
-    if not url or not re.match(r"^https?://", url):
+    if not url:
         return "error: invalid url", 400
+    # add https:// if not present or http://
+    if not re.match(r"https://", url):
+        if re.match(r"http://", url):
+            url = url.replace("http", "https")
+        else:
+            url = "https://" + url
+    # Interface and extractors assume the protocol is https
     css, kw = CSSKWInterface.get_fastest_way_css_kw(url)
     return jsonify({"css": css, "kw": kw})
 
